@@ -344,6 +344,35 @@
             color: #888;
         }
         
+        .access-message {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .access-message i {
+            font-size: 3rem;
+            color: #dc3545;
+            margin-bottom: 1rem;
+        }
+
+        .access-message .message-text {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+       }
+
+        .access-message .btn {
+            padding: 0.5rem 2rem;
+            font-size: 1.1rem;
+        }
+        
         .loading-state {
             text-align: center;
             padding: 40px;
@@ -887,8 +916,12 @@
     <section class="content" id="content">
         <div class="container">
             <h2 class="section-title">Our Resources</h2>
+            <div id="accessMessage" class="access-message" style="display: none;">
+                <i class="fas fa-lock"></i>
+                <p class="message-text"></p>
+                <button class="btn btn-primary" onclick="redirectToSubscription()">Subscribe Now</button>
+            </div>
             <div class="resources-grid" id="resourcesContainer">
-                <!-- Content will be loaded dynamically -->
                 <div class="loading-state">
                     <i class="fas fa-spinner fa-spin"></i> Loading resources...
                 </div>
@@ -1347,7 +1380,33 @@
         </div>
     </footer>
 
+    <script src="js/api.js"></script>
+    <script src="js/init.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/content-manager.js"></script>
     <script>
+        const contentManager = new ContentManager();
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            await contentManager.loadContent();
+            contentManager.displayPublicContent();
+        });
+
+        async function viewResource(id) {
+            // Check if user is logged in
+            const token = localStorage.getItem('token');
+            if (!token) {
+                openLoginModal();
+                return;
+            }
+            
+            // Handle resource viewing
+            const content = contentManager.content.find(item => item._id === id);
+            if (content) {
+                window.location.href = `/view-resource.html?id=${id}`;
+            }
+        }
+
         // Modal functionality
         function openModal(plan) {
             document.getElementById('paymentModal').style.display = 'flex';
@@ -1467,61 +1526,48 @@
 
         // Replace the existing handleSignup function
 
-function handleSignup(event) {
+async function handleSignup(event) {
     event.preventDefault();
-    
-    const userData = {
-        id: 'user_' + Date.now(),
-        fullName: document.getElementById('fullName').value,
-        email: document.getElementById('signupEmail').value,
-        password: document.getElementById('signupPassword').value,
-        phone: document.getElementById('phone').value,
-        signupDate: new Date().toISOString(),
-        lastLogin: new Date().toISOString(),
-        subscriptionPlan: 'None',
-        accessEndTime: null,
-        status: 'Active'
-    };
+    try {
+        const response = await makeRequest('/users/register', {
+            method: 'POST',
+            body: JSON.stringify({
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('signupEmail').value,
+                phone: document.getElementById('phone').value,
+                password: document.getElementById('signupPassword').value
+            })
+        });
 
-    // Check if email already exists
-    let users = JSON.parse(localStorage.getItem('i2s_users') || '[]');
-    if (users.some(user => user.email === userData.email)) {
-        alert('Email already registered. Please login instead.');
-        switchToLogin();
-        return;
+        if (response.success) {
+            localStorage.setItem('token', response.token);
+            localStorage.setItem('user', JSON.stringify(response.user));
+            window.location.href = 'dashboard.html';
+        }
+    } catch (error) {
+        showError(error.message);
     }
-
-    // Store user data
-    users.push(userData);
-    localStorage.setItem('i2s_users', JSON.stringify(users));
-    localStorage.setItem('currentUser', JSON.stringify(userData));
-
-    // Close signup modal and redirect to payment gateway
-    closeSignupModal();
-    window.location.href = 'paymentgateway.html';
 }
 
 // Replace the existing handleLogin function
-function handleLogin(event) {
+async function handleLogin(event) {
     event.preventDefault();
-    
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    try {
+        const response = await makeRequest('/users/login', {
+            method: 'POST',
+            body: JSON.stringify({
+                email: document.getElementById('loginEmail').value,
+                password: document.getElementById('loginPassword').value
+            })
+        });
 
-    let users = JSON.parse(localStorage.getItem('i2s_users') || '[]');
-    const user = users.find(u => u.email === email && u.password === password);
-
-    if (user) {
-        // Update last login time
-        user.lastLogin = new Date().toISOString();
-        localStorage.setItem('i2s_users', JSON.stringify(users));
-        localStorage.setItem('currentUser', JSON.stringify(user));
-
-        // Close login modal and redirect to index.html
-        closeLoginModal();
-        window.location.href = 'index.html';
-    } else {
-        alert('Invalid credentials. Please try again.');
+        if (response.success) {
+            localStorage.setItem('token', response.token);
+            localStorage.setItem('user', JSON.stringify(response.user));
+            window.location.href = 'dashboard.html';
+        }
+    } catch (error) {
+        showError(error.message);
     }
 }
 
@@ -1653,6 +1699,22 @@ function startAffiliateSignup() {
     localStorage.setItem('signupType', 'affiliate');
 }
     </script>
+    <script src="js/subscription-check.js"></script>
+    <script src="js/content-manager.js"></script>
+    <script src="js/content-access.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const contentAccess = new ContentAccess();
+            const contentManager = new ContentManager();
+            
+            // Initialize content if user has access
+            const accessStatus = await SubscriptionChecker.checkAccess();
+            if (accessStatus.hasAccess) {
+                await contentManager.loadContent();
+                contentManager.displayPublicContent();
+            }
+        });
+    </script>
 </body>
 </html>
-
+</html>
