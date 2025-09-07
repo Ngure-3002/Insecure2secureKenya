@@ -307,21 +307,16 @@
             top: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
-            padding-top: 60px;
+            background-color: rgba(0,0,0,0.5);
         }
         
         .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
+            background-color: #fff;
+            margin: 10% auto;
             padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
         }
         
         .close {
@@ -353,14 +348,14 @@
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1rem;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
         
-        .form-group textarea {
-            resize: vertical;
+        .form-group small {
+            color: #666;
+            font-size: 0.8em;
         }
 
         .user-count {
@@ -395,26 +390,16 @@
         }
 
         .action-btn {
-            padding: 6px 12px;
+            padding: 5px 10px;
+            margin: 0 2px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            margin: 0 4px;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
         }
 
-        .btn-approve {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-reject {
-            background: var(--danger);
-            color: white;
-        }
+        .btn-view { background-color: #007bff; }
+        .btn-edit { background-color: #28a745; }
+        .btn-delete { background-color: #dc3545; }
 
         .status-approved {
             background: #d4edda;
@@ -573,45 +558,50 @@
         <!-- Content Management Section -->
         <div class="table-section" id="contentSection">
             <div class="section-header">
-                <div class="section-title">Content Management</div>
-                <button class="btn btn-primary" onclick="openUploadModal()">Upload New Content</button>
+                <h2>Content Management</h2>
+                <button class="btn btn-primary" onclick="openUploadModal()">
+                    <i class="fas fa-upload"></i> Upload Content
+                </button>
             </div>
             
             <!-- Upload Modal -->
             <div id="uploadModal" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2>Upload New Content</h2>
+                        <h2>Upload Content</h2>
                         <span class="close" onclick="closeUploadModal()">&times;</span>
                     </div>
-                    <form id="uploadForm" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label for="contentTitle">Title</label>
-                            <input type="text" id="contentTitle" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="contentType">Content Type</label>
-                            <select id="contentType" class="form-control" required>
-                                <option value="">Select Type</option>
-                                <option value="video">Video</option>
-                                <option value="pdf">PDF Document</option>
-                                <option value="audio">Audio</option>
-                                <option value="article">Article</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="contentFile">File</label>
-                            <input type="file" id="contentFile" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="contentDescription">Description</label>
-                            <textarea id="contentDescription" class="form-control" rows="4"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Upload Content</button>
-                    </form>
+                    <div class="modal-body">
+                        <form id="uploadForm" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="contentTitle">Title</label>
+                                <input type="text" id="contentTitle" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contentType">Content Type</label>
+                                <select id="contentType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="video">Video</option>
+                                    <option value="pdf">PDF Document</option>
+                                    <option value="audio">Audio</option>
+                                    <option value="article">Article</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="contentFile">File</label>
+                                <input type="file" id="contentFile" required>
+                                <small>Max size: 50MB. Supported formats: PDF, Video, Audio</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="contentDescription">Description</label>
+                                <textarea id="contentDescription" rows="4"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Upload</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-
+            
             <!-- Content Table -->
             <table>
                 <thead>
@@ -624,54 +614,8 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="contentTable">
-                    <!-- Content will be loaded here -->
-                </tbody>
+                <tbody id="contentTable"></tbody>
             </table>
-
-            <!-- Add Edit Content Modal -->
-            <div id="editContentModal" class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2>Edit Content</h2>
-                        <span class="close" onclick="closeEditContentModal()">&times;</span>
-                    </div>
-                    <form id="editContentForm">
-                        <input type="hidden" id="editContentId">
-                        <div class="form-group">
-                            <label for="editContentTitle">Title</label>
-                            <input type="text" id="editContentTitle" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editContentType">Content Type</label>
-                            <select id="editContentType" class="form-control" required>
-                                <option value="video">Video</option>
-                                <option value="pdf">PDF Document</option>
-                                <option value="audio">Audio</option>
-                                <option value="article">Article</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="editContentDescription">Description</label>
-                            <textarea id="editContentDescription" class="form-control" rows="4"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Update Content</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Add View Content Modal -->
-            <div id="viewContentModal" class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2>Content Details</h2>
-                        <span class="close" onclick="closeViewContentModal()">&times;</span>
-                    </div>
-                    <div class="modal-body" id="contentDetails">
-                        <!-- Content details will be loaded here -->
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Marketing Materials Section -->
@@ -888,863 +832,71 @@
         </div>
     </div>
 
+    <script src="js/api.js"></script>
+    <script src="js/init.js"></script>
+    <script src="js/subscription-check.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/content-manager.js"></script>
     <script>
-        // Basic interactivity for the dashboard
-        document.querySelectorAll('.sidebar-menu li').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.sidebar-menu li').forEach(i => {
-                    i.style.background = 'none';
+        const contentManager = new ContentManager();
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            await contentManager.loadContent();
+            contentManager.displayAdminContent();
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const file = document.getElementById('contentFile').files[0];
+            
+            if (file.size > 50 * 1024 * 1024) {
+                alert('File size exceeds 50MB limit');
+                return;
+            }
+            
+            formData.append('title', document.getElementById('contentTitle').value);
+            formData.append('type', document.getElementById('contentType').value);
+            formData.append('description', document.getElementById('contentDescription').value);
+            formData.append('file', file);
+            
+            try {
+                const response = await fetch('/api/content/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: formData
                 });
-                this.style.background = 'rgba(255, 255, 255, 0.1)';
-            });
-        });
-
-        // Fetch dashboard data from backend
-        async function fetchDashboardData() {
-            try {
-                const response = await fetch('https://api.insecure2secure.com/api/dashboard/stats');
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+                
                 const data = await response.json();
-                updateDashboardCards(data);
-            } catch (error) {
-                console.error('Error fetching dashboard data:', error);
-                showErrorState();
-            }
-        }
-
-        // Update dashboard cards with real data
-        function updateDashboardCards(data) {
-            document.querySelector('#totalUsersCard .card-value').textContent = 
-                data.totalUsers.toLocaleString();
-            
-            document.querySelector('#activeSubsCard .card-value').textContent = 
-                data.activeSubscriptions.toLocaleString();
-            
-            document.querySelector('#pendingPaymentsCard .card-value').textContent = 
-                data.pendingPayments.toLocaleString();
-            
-            document.querySelector('#totalContentCard .card-value').textContent = 
-                data.totalContent.toLocaleString();
-        }
-
-        // Add this function to update dashboard cards
-        function updateDashboardCards() {
-            // Update Total Users
-            const users = JSON.parse(localStorage.getItem('i2s_users') || '[]');
-            document.querySelector('#totalUsersCard .card-value').innerHTML = users.length;
-
-            // Update Active Subscriptions
-            const activeSubscriptions = users.filter(user => {
-                if (!user.accessEndTime) return false;
-                return new Date(user.accessEndTime) > new Date();
-            }).length;
-            document.querySelector('#activeSubsCard .card-value').innerHTML = activeSubscriptions;
-
-            // Update Pending Payments
-            const pendingPayments = JSON.parse(localStorage.getItem('pendingPayments') || '[]')
-                .filter(payment => payment.status === 'pending').length;
-            document.querySelector('#pendingPaymentsCard .card-value').innerHTML = pendingPayments;
-
-            // Update Total Content
-            const content = JSON.parse(localStorage.getItem('siteContent') || '[]').length;
-            document.querySelector('#totalContentCard .card-value').innerHTML = content;
-        }
-
-        // Fetch users data
-        async function fetchUsers() {
-            try {
-                const response = await fetch('https://api.insecure2secure.com/api/users');
-                if (!response.ok) throw new Error('Failed to fetch users');
-                const users = await response.json();
-                displayUsers(users);
-            } catch (error) {
-                console.error('Error fetching users:', error);
-                showUsersError();
-            }
-        }
-
-        // Display users in the table
-        function displayUsers() {
-            const users = JSON.parse(localStorage.getItem('i2s_users') || '[]');
-            const tableBody = document.getElementById('userManagementTable');
-            document.getElementById('userCount').textContent = users.length;
-
-            tableBody.innerHTML = users.map(user => {
-                const timeRemaining = calculateTimeRemaining(user.accessEndTime);
-                const status = determineUserStatus(user.accessEndTime);
-        
-                return `
-                    <tr>
-                        <td>${escapeHtml(user.fullName)}</td>
-                        <td>${escapeHtml(user.email)}</td>
-                        <td>${escapeHtml(user.phone)}</td>
-                        <td>${new Date(user.signupDate).toLocaleString()}</td>
-                        <td>${new Date(user.lastLogin).toLocaleString()}</td>
-                        <td>${escapeHtml(user.subscriptionPlan || 'None')}</td>
-                        <td>${user.accessEndTime ? new Date(user.accessEndTime).toLocaleString() : 'No subscription'}</td>
-                        <td>${timeRemaining}</td>
-                        <td><span class="status-${status.toLowerCase()}">${status}</span></td>
-                        <td>
-                            <button class="action-btn btn-view" onclick="viewUser('${user.id}')">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="action-btn btn-edit" onclick="editUser('${user.id}')">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="action-btn btn-delete" onclick="deleteUser('${user.id}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                            <button class="action-btn btn-access" onclick="manageAccess('${user.id}')">
-                                <i class="fas fa-clock"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        
-            // Update dashboard cards whenever users table is updated
-            updateDashboardCards();
-        }
-
-        // Refresh user table every minute
-        setInterval(displayUsers, 60000);
-
-        // Calculate remaining time
-        function calculateTimeRemaining(endTime) {
-            if (!endTime) return 'No subscription';
-            
-            const now = new Date();
-            const end = new Date(endTime);
-            const diff = end - now;
-            
-            if (diff <= 0) return 'Expired';
-            
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            
-            if (days > 0) return `${days}d ${hours}h`;
-            if (hours > 0) return `${hours}h ${minutes}m`;
-            return `${minutes}m`;
-        }
-
-        // Determine user status
-        function determineUserStatus(endTime) {
-            if (!endTime) return 'Inactive';
-            return new Date(endTime) > new Date() ? 'Active' : 'Expired';
-        }
-
-        function manageAccess(userId) {
-            const users = JSON.parse(localStorage.getItem('i2s_users') || '[]');
-            const user = users.find(u => u.id === userId);
-            if (!user) return;
-
-            const modalHTML = `
-                <div id="accessModal" class="modal">
-                    <div class="modal-content">
-                         <div class="modal-header">
-                             <h2>Manage User Access</h2>
-                             <span class="close" onclick="closeAccessModal()">&times;</span>
-                         </div>
-                         <div class="modal-body">
-                             <div class="user-info">
-                                 <p><strong>User:</strong> ${escapeHtml(user.fullName)}</p>
-                                 <p><strong>Current Plan:</strong> ${escapeHtml(user.subscriptionPlan || 'None')}</p>
-                                 <p><strong>Access Until:</strong> ${user.accessEndTime ? new Date(user.accessEndTime).toLocaleString() : 'No active subscription'}</p>
-                             </div>
-                             <form id="accessForm" onsubmit="setUserAccess(event, '${userId}')">
-                                 <div class="form-group">
-                                     <label>Select Access Package:</label>
-                                     <select id="accessPackage" class="form-control" required>
-                                         <option value="">Choose a package</option>
-                                         <option value="60|20|hourly">60 Minutes Access (KES 20)</option>
-                                         <option value="1440|100|daily">24 Hours Access (KES 100)</option>
-                                         <option value="10080|500|weekly">7 Days Access (KES 500)</option>
-                                         <option value="43200|1800|monthly">30 Days Access (KES 1,800)</option>
-                                         <option value="525600|24000|annual">1 Year Access (KES 24,000)</option>
-                                     </select>
-                                 </div>
-                                 <button type="submit" class="btn btn-primary">Set Access Time</button>
-                             </form>
-                         </div>
-                     </div>
-                 </div>
-            `;
-
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-            document.getElementById('accessModal').style.display = 'block';
-        }
-
-        function setUserAccess(event, userId) {
-            event.preventDefault();
-    
-            const packageValue = document.getElementById('accessPackage').value;
-            if (!packageValue) return;
-
-            const [minutes, amount, plan] = packageValue.split('|');
-            const users = JSON.parse(localStorage.getItem('i2s_users') || '[]');
-            const userIndex = users.findIndex(u => u.id === userId);
-    
-            if (userIndex === -1) return;
-    
-            const now = new Date();
-            users[userIndex].accessEndTime = new Date(now.getTime() + minutes * 60000).toISOString();
-            users[userIndex].subscriptionPlan = plan.charAt(0).toUpperCase() + plan.slice(1);
-            users[userIndex].lastPayment = {
-                amount: parseInt(amount),
-                date: now.toISOString(),
-                plan: plan
-            };
-    
-            localStorage.setItem('i2s_users', JSON.stringify(users));
-            closeAccessModal();
-            displayUsers();
-            updateDashboardCards();
-        }
-
-        function getSubscriptionPlanFromMinutes(minutes) {
-            switch(minutes) {
-                case 60: return 'Hourly';
-                case 1440: return 'Daily';
-                case 43200: return 'Monthly';
-                case 525600: return 'Annual';
-                default: return 'Custom';
-            }
-        }
-
-        function closeAccessModal() {
-            const modal = document.getElementById('accessModal');
-            modal.remove();
-        }
-
-        // Add user access check function
-        function checkUserAccess(userId) {
-            const users = JSON.parse(localStorage.getItem('i2s_users') || '[]');
-            const user = users.find(u => u.id === userId);
-            
-            if (!user || !user.accessEndTime) return false;
-            return new Date(user.accessEndTime) > new Date();
-        }
-
-        // Update the upload form submission handler
-        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const file = handleFileUpload(document.getElementById('contentFile'));
-            if (!file) return;
-
-            const content = {
-                id: 'content_' + Date.now(),
-                title: document.getElementById('contentTitle').value,
-                type: document.getElementById('contentType').value,
-                fileName: file.name,
-                size: file.size,
-                description: document.getElementById('contentDescription').value,
-                uploadDate: new Date().toISOString(),
-                views: 0
-            };
-
-            // Store content metadata
-            let siteContent = JSON.parse(localStorage.getItem('siteContent') || '[]');
-            siteContent.push(content);
-            localStorage.setItem('siteContent', JSON.stringify(siteContent));
-
-            // Store file using FileReader
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                let files = JSON.parse(localStorage.getItem('contentFiles') || '{}');
-                files[content.id] = e.target.result;
-                localStorage.setItem('contentFiles', JSON.stringify(files));
-                
-                closeUploadModal();
-                displayContent();
-                updateDashboardCards();
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // Escape HTML helper function
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Scroll to payments section
-        function scrollToPayments(event) {
-            event.preventDefault();
-            const paymentsSection = document.getElementById('recentPaymentsSection');
-            const transactionSection = document.getElementById('transactionSection');
-            
-            // Scroll to Recent Payments section
-            paymentsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            
-            // Highlight both sections briefly
-            paymentsSection.style.animation = 'none';
-            transactionSection.style.animation = 'none';
-            
-            // Trigger reflow
-            paymentsSection.offsetHeight;
-            transactionSection.offsetHeight;
-            
-            // Add highlight animation
-            paymentsSection.style.animation = 'highlightSection 2s';
-            transactionSection.style.animation = 'highlightSection 2s';
-            
-            // Load/refresh the payment data
-            loadTransactions();
-        }
-
-        // Scroll to users section
-        function scrollToUsers(event) {
-            event.preventDefault();
-            const usersSection = document.getElementById('usersSection');
-            usersSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            
-            // Highlight the section briefly
-            usersSection.style.animation = 'none';
-            usersSection.offsetHeight; // Trigger reflow
-            usersSection.style.animation = 'highlightSection 2s';
-        }
-
-        // Scroll to content section
-        function scrollToContent(event) {
-            event.preventDefault();
-            const contentSection = document.getElementById('contentSection');
-            contentSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            
-            // Highlight the section briefly
-            contentSection.style.animation = 'none';
-            contentSection.offsetHeight; // Trigger reflow
-            contentSection.style.animation = 'highlightSection 2s';
-        }
-
-        // Initialize marketing materials handling
-        document.addEventListener('DOMContentLoaded', function() {
-            loadMarketingMaterials();
-            
-            document.getElementById('marketingUploadForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData();
-                formData.append('type', document.getElementById('materialType').value);
-                formData.append('title', document.getElementById('materialTitle').value);
-                formData.append('file', document.getElementById('materialFile').files[0]);
-                formData.append('description', document.getElementById('materialDescription').value);
-                
-                try {
-                    // Store in localStorage for demo
-                    const materials = JSON.parse(localStorage.getItem('marketingMaterials') || '[]');
-                    const newMaterial = {
-                        id: 'mat_' + Date.now(),
-                        type: document.getElementById('materialType').value,
-                        title: document.getElementById('materialTitle').value,
-                        fileName: document.getElementById('materialFile').files[0].name,
-                        description: document.getElementById('materialDescription').value,
-                        uploadDate: new Date().toISOString(),
-                        downloads: 0,
-                        status: 'Active'
-                    };
-                    
-                    materials.push(newMaterial);
-                    localStorage.setItem('marketingMaterials', JSON.stringify(materials));
-                    
-                    alert('Material uploaded successfully!');
+                if (data.success) {
+                    await contentManager.loadContent();
+                    contentManager.displayAdminContent();
                     closeUploadModal();
-                    loadMarketingMaterials();
-                } catch (error) {
-                    console.error('Upload error:', error);
-                    alert('Upload failed. Please try again.');
+                    showNotification('Content uploaded successfully', 'success');
                 }
-            });
+            } catch (error) {
+                showNotification(error.message, 'error');
+            }
         });
 
-        function loadMarketingMaterials() {
-            const materials = JSON.parse(localStorage.getItem('marketingMaterials') || '[]');
-            const tableBody = document.getElementById('marketingMaterialsTable');
-            
-            if (materials.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center;">No marketing materials uploaded yet</td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            tableBody.innerHTML = materials.map(material => `
-                <tr>
-                    <td>${material.type.charAt(0).toUpperCase() + material.type.slice(1)}</td>
-                    <td>${material.title}</td>
-                    <td>${new Date(material.uploadDate).toLocaleDateString()}</td>
-                    <td>${material.downloads}</td>
-                    <td><span class="status-${material.status.toLowerCase()}">${material.status}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-view" onclick="viewMaterial('${material.id}')">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-delete" onclick="deleteMaterial('${material.id}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
+        function openUploadModal() {
+            document.getElementById('uploadModal').style.display = 'block';
         }
 
-        function viewMaterial(materialId) {
-            const materials = JSON.parse(localStorage.getItem('marketingMaterials') || '[]');
-            const material = materials.find(m => m.id === materialId);
-            if (!material) return;
-            
-            alert(`
-                Title: ${material.title}
-                Type: ${material.type}
-                Description: ${material.description}
-                File: ${material.fileName}
-                Downloads: ${material.downloads}
-                Upload Date: ${new Date(material.uploadDate).toLocaleDateString()}
-            `);
+        function closeUploadModal() {
+            document.getElementById('uploadModal').style.display = 'none';
+            document.getElementById('uploadForm').reset();
         }
-
-        function deleteMaterial(materialId) {
-            if (!confirm('Are you sure you want to delete this material?')) return;
+        document.addEventListener('DOMContentLoaded', async () => {
+            const contentManager = new ContentManager();
+            const dashboard = new Dashboard(contentManager);
             
-            const materials = JSON.parse(localStorage.getItem('marketingMaterials') || '[]');
-            const updatedMaterials = materials.filter(m => m.id !== materialId);
-            localStorage.setItem('marketingMaterials', JSON.stringify(updatedMaterials));
-            loadMarketingMaterials();
-        }
-
-        function loadTransactions() {
-            const transactions = JSON.parse(localStorage.getItem('pendingPayments') || '[]');
-            const tableBody = document.getElementById('transactionTable');
-            
-            tableBody.innerHTML = transactions.map(tx => `
-                <tr>
-                    <td>${new Date(tx.timestamp).toLocaleString()}</td>
-                    <td>${tx.mpesaCode}</td>
-                    <td>${tx.phoneNumber}</td>
-                    <td>${tx.plan}</td>
-                    <td>${tx.amount}</td>
-                    <td><span class="status-${tx.status.toLowerCase()}">${tx.status}</span></td>
-                    <td>
-                        <button class="action-btn btn-view" onclick="viewTransaction('${tx.mpesaCode}')">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        ${tx.status === 'pending' ? `
-                            <button class="action-btn btn-approve" onclick="handleTransaction('${tx.mpesaCode}', 'approve')">
-                                <i class="fas fa-check"></i>
-                            </button>
-                            <button class="action-btn btn-reject" onclick="handleTransaction('${tx.mpesaCode}', 'reject')">
-                                <i class="fas fa-times"></i>
-                            </button>
-                            <button class="action-btn btn-delete" onclick="deleteTransaction('${tx.mpesaCode}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        ` : ''}
-                    </td>
-                </tr>
-            `).join('');
-
-            // Also update recent payments if any
-            loadRecentPayments();
-        }
-
-        function handleTransaction(mpesaCode, action) {
-            if (!confirm(`Are you sure you want to ${action} this transaction?`)) return;
-            
-            let transactions = JSON.parse(localStorage.getItem('pendingPayments') || '[]');
-            const transactionIndex = transactions.findIndex(tx => tx.mpesaCode === mpesaCode);
-            
-            if (transactionIndex === -1) return;
-            
-            if (action === 'approve') {
-                // Update transaction status
-                transactions[transactionIndex].status = 'approved';
-                
-                // Add to recent payments
-                let recentPayments = JSON.parse(localStorage.getItem('recentPayments') || '[]');
-                recentPayments.unshift(transactions[transactionIndex]);
-                localStorage.setItem('recentPayments', JSON.stringify(recentPayments));
-                
-                // Update user access
-                grantUserAccess(transactions[transactionIndex]);
-            } else {
-                // Mark as rejected
-                transactions[transactionIndex].status = 'rejected';
-            }
-            
-            localStorage.setItem('pendingPayments', JSON.stringify(transactions));
-            loadTransactions();
-        }
-
-        function refreshTransactions() {
-            loadTransactions();
-        }
-
-        // Add these functions to your existing script section
-        function displayContent() {
-            const content = JSON.parse(localStorage.getItem('siteContent') || '[]');
-            const tableBody = document.getElementById('contentTable');
-            
-            tableBody.innerHTML = content.map(item => `
-                <tr>
-                    <td>${escapeHtml(item.title)}</td>
-                    <td>${escapeHtml(item.type)}</td>
-                    <td>${new Date(item.uploadDate).toLocaleString()}</td>
-                    <td>${formatFileSize(item.size)}</td>
-                    <td>${item.views}</td>
-                    <td>
-                        <button class="action-btn btn-view" onclick="viewContent('${item.id}')">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="action-btn btn-edit" onclick="editContent('${item.id}')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn btn-delete" onclick="deleteContent('${item.id}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function viewContent(contentId) {
-            const content = JSON.parse(localStorage.getItem('siteContent') || '[]');
-            const item = content.find(c => c.id === contentId);
-            
-            if (!item) return;
-            
-            document.getElementById('contentDetails').innerHTML = `
-                <div class="content-info">
-                    <p><strong>Title:</strong> ${escapeHtml(item.title)}</p>
-                    <p><strong>Type:</strong> ${escapeHtml(item.type)}</p>
-                    <p><strong>Description:</strong> ${escapeHtml(item.description)}</p>
-                    <p><strong>Upload Date:</strong> ${new Date(item.uploadDate).toLocaleString()}</p>
-                    <p><strong>Size:</strong> ${formatFileSize(item.size)}</p>
-                    <p><strong>Views:</strong> ${item.views}</p>
-                </div>
-            `;
-            
-            document.getElementById('viewContentModal').style.display = 'block';
-        }
-
-        function editContent(contentId) {
-            const content = JSON.parse(localStorage.getItem('siteContent') || '[]');
-            const item = content.find(c => c.id === contentId);
-            
-            if (!item) return;
-            
-            document.getElementById('editContentId').value = item.id;
-            document.getElementById('editContentTitle').value = item.title;
-            document.getElementById('editContentType').value = item.type;
-            document.getElementById('editContentDescription').value = item.description;
-            
-            document.getElementById('editContentModal').style.display = 'block';
-        }
-
-        function deleteContent(contentId) {
-            if (!confirm('Are you sure you want to delete this content?')) return;
-            
-            let content = JSON.parse(localStorage.getItem('siteContent') || '[]');
-            content = content.filter(c => c.id !== contentId);
-            localStorage.setItem('siteContent', JSON.stringify(content));
-            displayContent();
-        }
-
-        function viewTransaction(mpesaCode) {
-            const transactions = JSON.parse(localStorage.getItem('pendingPayments') || '[]');
-            const transaction = transactions.find(tx => tx.mpesaCode === mpesaCode);
-            
-            if (!transaction) return;
-            
-            document.getElementById('transactionDetails').innerHTML = `
-                <div class="transaction-info">
-                    <p><strong>Transaction Code:</strong> ${transaction.mpesaCode}</p>
-                    <p><strong>Phone Number:</strong> ${transaction.phoneNumber}</p>
-                    <p><strong>Plan:</strong> ${transaction.plan}</p>
-                    <p><strong>Amount:</strong> ${transaction.amount}</p>
-                    <p><strong>Date:</strong> ${new Date(transaction.timestamp).toLocaleString()}</p>
-                    <p><strong>Status:</strong> <span class="status-${transaction.status.toLowerCase()}">${transaction.status}</span></p>
-                </div>
-            `;
-            
-            document.getElementById('viewTransactionModal').style.display = 'block';
-        }
-
-        function closeViewTransactionModal() {
-            document.getElementById('viewTransactionModal').style.display = 'none';
-        }
-
-        function deleteTransaction(mpesaCode) {
-            if (!confirm('Are you sure you want to delete this transaction?')) return;
-            
-            let transactions = JSON.parse(localStorage.getItem('pendingPayments') || '[]');
-            transactions = transactions.filter(tx => tx.mpesaCode !== mpesaCode);
-            localStorage.setItem('pendingPayments', JSON.stringify(transactions));
-            loadTransactions();
-        }
-
-        // Load recent payments data
-        function loadRecentPayments() {
-            const recentPayments = JSON.parse(localStorage.getItem('recentPayments') || '[]');
-            const tableBody = document.getElementById('recentPaymentsTable');
-            
-            if (recentPayments.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="text-center">No recent payments found</td>
-                    </tr>
-                `;
-                return;
-            }
-
-            tableBody.innerHTML = recentPayments.map(payment => `
-                <tr>
-                    <td>${new Date(payment.timestamp).toLocaleString()}</td>
-                    <td>${payment.mpesaCode}</td>
-                    <td>${payment.phoneNumber}</td>
-                    <td>${payment.plan}</td>
-                    <td>${payment.amount}</td>
-                    <td><span class="status-${payment.status.toLowerCase()}">${payment.status}</span></td>
-                    <td>
-                        <button class="action-btn btn-view" onclick="viewRecentPayment('${payment.mpesaCode}')">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="action-btn btn-edit" onclick="editRecentPayment('${payment.mpesaCode}')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn btn-delete" onclick="deleteRecentPayment('${payment.mpesaCode}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function viewRecentPayment(mpesaCode) {
-            const payments = JSON.parse(localStorage.getItem('recentPayments') || '[]');
-            const payment = payments.find(p => p.mpesaCode === mpesaCode);
-            
-            if (!payment) return;
-            
-            document.getElementById('recentPaymentDetails').innerHTML = `
-                <div class="payment-info">
-                    <p><strong>Transaction Code:</strong> ${payment.mpesaCode}</p>
-                    <p><strong>Phone Number:</strong> ${payment.phoneNumber}</p>
-                    <p><strong>Plan:</strong> ${payment.plan}</p>
-                    <p><strong>Amount:</strong> ${payment.amount}</p>
-                    <p><strong>Date:</strong> ${new Date(payment.timestamp).toLocaleString()}</p>
-                    <p><strong>Status:</strong> <span class="status-${payment.status.toLowerCase()}">${payment.status}</span></p>
-                </div>
-            `;
-            
-            document.getElementById('viewRecentPaymentModal').style.display = 'block';
-        }
-
-        function editRecentPayment(mpesaCode) {
-            const payments = JSON.parse(localStorage.getItem('recentPayments') || '[]');
-            const payment = payments.find(p => p.mpesaCode === mpesaCode);
-            
-            if (!payment) return;
-            
-            document.getElementById('editPaymentCode').value = payment.mpesaCode;
-            document.getElementById('editPaymentPlan').value = payment.plan;
-            document.getElementById('editPaymentAmount').value = payment.amount;
-            
-            document.getElementById('editRecentPaymentModal').style.display = 'block';
-        }
-
-        function deleteRecentPayment(mpesaCode) {
-            if (!confirm('Are you sure you want to delete this payment record?')) return;
-            
-            let payments = JSON.parse(localStorage.getItem('recentPayments') || '[]');
-            payments = payments.filter(p => p.mpesaCode !== mpesaCode);
-            localStorage.setItem('recentPayments', JSON.stringify(payments));
-            loadRecentPayments();
-        }
-
-        // Add form submission handler for editing payment
-        document.getElementById('editPaymentForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const mpesaCode = document.getElementById('editPaymentCode').value;
-            const newPlan = document.getElementById('editPaymentPlan').value;
-            const newAmount = document.getElementById('editPaymentAmount').value;
-            
-            let payments = JSON.parse(localStorage.getItem('recentPayments') || '[]');
-            payments = payments.map(p => {
-                if (p.mpesaCode === mpesaCode) {
-                    p.plan = newPlan;
-                    p.amount = newAmount;
-                }
-                return p;
-            });
-            
-            localStorage.setItem('recentPayments', JSON.stringify(payments));
-            closeEditRecentPaymentModal();
-            loadRecentPayments();
+            // Initialize dashboard components
+            await dashboard.initialize();
         });
-
-        // Add automatic refresh for dashboard cards
-        setInterval(() => {
-            updateDashboardCards();
-        }, 30000); // Updates every 30 seconds
-
-        // Initialize dashboard cards on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            updateDashboardCards();
-        });
-
-        // Add to your existing script section
-        function handleFileUpload(fileInput, maxSize = 50 * 1024 * 1024) { // 50MB max
-            const file = fileInput.files[0];
-            if (!file) return null;
-
-            // Check file size
-            if (file.size > maxSize) {
-                alert('File is too large. Maximum size is ' + formatFileSize(maxSize));
-                return null;
-            }
-
-            return file;
-        }
-
-        // Update the content upload form
-        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const file = handleFileUpload(document.getElementById('contentFile'));
-            if (!file) return;
-
-            const content = {
-                id: 'content_' + Date.now(),
-                title: document.getElementById('contentTitle').value,
-                type: document.getElementById('contentType').value,
-                fileName: file.name,
-                size: file.size,
-                description: document.getElementById('contentDescription').value,
-                uploadDate: new Date().toISOString(),
-                views: 0
-            };
-
-            // Store content metadata
-            let siteContent = JSON.parse(localStorage.getItem('siteContent') || '[]');
-            siteContent.push(content);
-            localStorage.setItem('siteContent', JSON.stringify(siteContent));
-
-            // Store file using FileReader
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                let files = JSON.parse(localStorage.getItem('contentFiles') || '{}');
-                files[content.id] = e.target.result;
-                localStorage.setItem('contentFiles', JSON.stringify(files));
-                
-                closeUploadModal();
-                displayContent();
-                updateDashboardCards();
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // Add these user management functions
-        function viewUser(userId) {
-            const users = JSON.parse(localStorage.getItem('i2s_users') || '[]');
-            const user = users.find(u => u.id === userId);
-            
-            if (!user) return;
-            
-            document.getElementById('userDetails').innerHTML = `
-                <div class="user-info">
-                    <p><strong>Name:</strong> ${escapeHtml(user.fullName)}</p>
-                    <p><strong>Email:</strong> ${escapeHtml(user.email)}</p>
-                    <p><strong>Phone:</strong> ${escapeHtml(user.phone)}</p>
-                    <p><strong>Signup Date:</strong> ${new Date(user.signupDate).toLocaleString()}</p>
-                    <p><strong>Last Login:</strong> ${new Date(user.lastLogin).toLocaleString()}</p>
-                    <p><strong>Subscription Plan:</strong> ${escapeHtml(user.subscriptionPlan)}</p>
-                    <p><strong>Access Until:</strong> ${user.accessEndTime ? new Date(user.accessEndTime).toLocaleString() : 'No subscription'}</p>
-                    <p><strong>Status:</strong> <span class="status-${determineUserStatus(user.accessEndTime).toLowerCase()}">${determineUserStatus(user.accessEndTime)}</span></p>
-                </div>
-            `;
-            
-            document.getElementById('viewUserModal').style.display = 'block';
-        }
-
-        function editUser(userId) {
-            const users = JSON.parse(localStorage.getItem('i2s_users') || '[]');
-            const user = users.find(u => u.id === userId);
-            
-            if (!user) return;
-            
-            document.getElementById('editUserId').value = user.id;
-            document.getElementById('editUserName').value = user.fullName;
-            document.getElementById('editUserEmail').value = user.email;
-            document.getElementById('editUserPhone').value = user.phone;
-            
-            document.getElementById('editUserModal').style.display = 'block';
-        }
-
-        function deleteUser(userId) {
-            if (!confirm('Are you sure you want to delete this user?')) return;
-            
-            let users = JSON.parse(localStorage.getItem('i2s_users') || '[]');
-            users = users.filter(u => u.id !== userId);
-            localStorage.setItem('i2s_users', JSON.stringify(users));
-            displayUsers();
-            updateDashboardCards();
-        }
-
-        // Add form submission handler for editing user
-        document.getElementById('editUserForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const userId = document.getElementById('editUserId').value;
-            let users = JSON.parse(localStorage.getItem('i2s_users') || '[]');
-            
-            users = users.map(u => {
-                if (u.id === userId) {
-                    return {
-                        ...u,
-                        fullName: document.getElementById('editUserName').value,
-                        email: document.getElementById('editUserEmail').value,
-                        phone: document.getElementById('editUserPhone').value
-                    };
-                }
-                return u;
-            });
-            
-            localStorage.setItem('i2s_users', JSON.stringify(users));
-            closeEditUserModal();
-            displayUsers();
-        });
-
-        function closeViewUserModal() {
-            document.getElementById('viewUserModal').style.display = 'none';
-        }
-
-        function closeEditUserModal() {
-            document.getElementById('editUserModal').style.display = 'none';
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        function getFileIcon(type) {
-            switch(type) {
-                case 'video': return 'fas fa-video';
-                case 'pdf': return 'fas fa-file-pdf';
-                case 'audio': return 'fas fa-music';
-                case 'article': return 'fas fa-file-alt';
-                default: return 'fas fa-file';
-            }
-        }
     </script>
 </body>
 </html>
